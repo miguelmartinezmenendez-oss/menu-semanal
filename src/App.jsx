@@ -4,6 +4,7 @@ import Welcome from './pages/Welcome'
 import WeeklyMenu from './pages/WeeklyMenu'
 import MyDishes from './pages/MyDishes'
 import ShoppingList from './pages/ShoppingList'
+import Settings from './pages/Settings'
 import BottomNav from './components/BottomNav'
 
 function AppRoutes() {
@@ -18,6 +19,7 @@ function AppRoutes() {
           <Route path="/" element={<WeeklyMenu />} />
           <Route path="/platos" element={<MyDishes />} />
           <Route path="/compra" element={<ShoppingList />} />
+          <Route path="/ajustes" element={<Settings />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </main>
