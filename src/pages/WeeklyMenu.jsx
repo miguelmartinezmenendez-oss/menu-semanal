@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useHousehold } from '../contexts/HouseholdContext'
 import { useDishes } from '../hooks/useDishes'
-import { useWeeklyMenu, DAYS, formatWeekRange, getWeekStart } from '../hooks/useWeeklyMenu'
+import { useWeeklyMenu, DAYS, MAX_DISHES_PER_DAY, dishCol, formatWeekRange, getWeekStart } from '../hooks/useWeeklyMenu'
 import { useShoppingList } from '../hooks/useShoppingList'
 import DayCard from '../components/DayCard'
 import DishSelector from '../components/DishSelector'
@@ -43,12 +43,12 @@ export default function WeeklyMenu() {
       alert('Primero añade platos en Mis platos')
       return
     }
-    const slot = menu?.[`${dayKey}_dish_id`] ? 2 : 1
-    if (slot === 2 && menu?.[`${dayKey}_dish2_id`]) return
-    const usedIds = DAYS.flatMap((d) => [
-      menu?.[`${d}_dish_id`],
-      menu?.[`${d}_dish2_id`],
-    ]).filter(Boolean)
+    const slot = Array.from({ length: MAX_DISHES_PER_DAY }, (_, i) => i + 1)
+      .find((s) => !menu?.[dishCol(dayKey, s)])
+    if (!slot) return
+    const usedIds = DAYS.flatMap((d) =>
+      Array.from({ length: MAX_DISHES_PER_DAY }, (_, i) => menu?.[dishCol(d, i + 1)])
+    ).filter(Boolean)
     const dish = randomDish(usedIds)
     if (!dish) return
     await setDishForDay(dayKey, dish.id, slot)
@@ -101,19 +101,17 @@ export default function WeeklyMenu() {
 
       <div className="space-y-2">
         {DAYS.map((day) => {
-          const dish1 = dishMap[menu?.[`${day}_dish_id`]] ?? null
-          const dish2 = dishMap[menu?.[`${day}_dish2_id`]] ?? null
+          const dishes = Array.from({ length: MAX_DISHES_PER_DAY }, (_, i) =>
+            dishMap[menu?.[dishCol(day, i + 1)]] ?? null
+          )
           return (
             <DayCard
               key={day}
               label={DAY_LABELS[day]}
-              dish1={dish1}
-              dish2={dish2}
-              onAdd1={() => setSelector({ day, slot: 1 })}
-              onAdd2={() => setSelector({ day, slot: 2 })}
+              dishes={dishes}
+              onAdd={(slot) => setSelector({ day, slot })}
+              onClear={(slot) => { clearDishForDay(day, slot); setMenuChanged(true) }}
               onRandom={() => handleRandom(day)}
-              onClear1={() => { clearDishForDay(day, 1); setMenuChanged(true) }}
-              onClear2={() => { clearDishForDay(day, 2); setMenuChanged(true) }}
             />
           )
         })}

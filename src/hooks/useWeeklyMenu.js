@@ -2,6 +2,11 @@ import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 
 export const DAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
+export const MAX_DISHES_PER_DAY = 4
+
+export function dishCol(dayKey, slot) {
+  return slot === 1 ? `${dayKey}_dish_id` : `${dayKey}_dish${slot}_id`
+}
 
 export function getWeekStart(date = new Date()) {
   const d = new Date(date)
@@ -63,7 +68,7 @@ export function useWeeklyMenu(householdId) {
   }
 
   async function setDishForDay(dayKey, dishId, slot = 1) {
-    const col = slot === 2 ? `${dayKey}_dish2_id` : `${dayKey}_dish_id`
+    const col = dishCol(dayKey, slot)
     if (menu) {
       await supabase.from('weekly_menu').update({ [col]: dishId }).eq('id', menu.id)
     } else {
@@ -77,13 +82,14 @@ export function useWeeklyMenu(householdId) {
 
   async function clearDishForDay(dayKey, slot = 1) {
     if (!menu) return
-    const col = slot === 2 ? `${dayKey}_dish2_id` : `${dayKey}_dish_id`
-    await supabase.from('weekly_menu').update({ [col]: null }).eq('id', menu.id)
+    await supabase.from('weekly_menu').update({ [dishCol(dayKey, slot)]: null }).eq('id', menu.id)
   }
 
   function hasAnyDish() {
     if (!menu) return false
-    return DAYS.some((d) => menu[`${d}_dish_id`] || menu[`${d}_dish2_id`])
+    return DAYS.some((d) =>
+      Array.from({ length: MAX_DISHES_PER_DAY }, (_, i) => i + 1).some((s) => menu[dishCol(d, s)])
+    )
   }
 
   return { menu, weekStart, loading, prevWeek, nextWeek, setDishForDay, clearDishForDay, hasAnyDish }

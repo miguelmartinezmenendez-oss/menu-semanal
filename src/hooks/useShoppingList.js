@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 import { categorizeIngredient } from '../lib/categories'
-import { DAYS } from './useWeeklyMenu'
+import { DAYS, MAX_DISHES_PER_DAY, dishCol } from './useWeeklyMenu'
 
 export function useShoppingList(householdId, weekStart) {
   const [items, setItems] = useState([])
@@ -45,8 +45,8 @@ export function useShoppingList(householdId, weekStart) {
     const dishMap = Object.fromEntries(dishes.map((d) => [d.id, d]))
     const allIngredients = []
     for (const day of DAYS) {
-      for (const col of [`${day}_dish_id`, `${day}_dish2_id`]) {
-        const dishId = menu[col]
+      for (let s = 1; s <= MAX_DISHES_PER_DAY; s++) {
+        const dishId = menu[dishCol(day, s)]
         if (dishId && dishMap[dishId]) {
           allIngredients.push(...(dishMap[dishId].ingredients || []))
         }
