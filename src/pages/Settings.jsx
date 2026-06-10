@@ -1,13 +1,19 @@
 import { useEffect, useState } from 'react'
-import { Copy, Check, LogOut } from 'lucide-react'
+import { Copy, Check, LogOut, Sparkles } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useHousehold } from '../contexts/HouseholdContext'
 import { clearStoredHouseholdId } from '../lib/household'
+import { useDishes } from '../hooks/useDishes'
 
 export default function Settings() {
   const { householdId, setHouseholdId } = useHousehold()
+  const { dishes, categorizeAll } = useDishes(householdId)
   const [code, setCode] = useState('')
   const [copied, setCopied] = useState(false)
+  const [categorizing, setCategorizing] = useState(false)
+  const [categorized, setCategorized] = useState(false)
+
+  const untypedCount = dishes.filter((d) => !d.type).length
 
   useEffect(() => {
     supabase
@@ -22,6 +28,14 @@ export default function Settings() {
     await navigator.clipboard.writeText(code)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
+  }
+
+  async function handleCategorizeAll() {
+    setCategorizing(true)
+    await categorizeAll()
+    setCategorizing(false)
+    setCategorized(true)
+    setTimeout(() => setCategorized(false), 3000)
   }
 
   function handleLeave() {
@@ -54,9 +68,24 @@ export default function Settings() {
         </div>
       </div>
 
+      {untypedCount > 0 && (
+        <button
+          onClick={handleCategorizeAll}
+          disabled={categorizing}
+          className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-emerald-50 text-emerald-700 text-sm font-medium mb-3 active:bg-emerald-100 disabled:opacity-50 cursor-pointer"
+        >
+          <Sparkles size={16} />
+          {categorized
+            ? 'Tipos aplicados'
+            : categorizing
+            ? 'Detectando...'
+            : `Detectar tipo en ${untypedCount} plato${untypedCount !== 1 ? 's' : ''}`}
+        </button>
+      )}
+
       <button
         onClick={handleLeave}
-        className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl border border-red-200 text-red-400 text-sm font-medium active:bg-red-50"
+        className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl border border-red-200 text-red-400 text-sm font-medium active:bg-red-50 cursor-pointer"
       >
         <LogOut size={16} /> Salir del hogar
       </button>

@@ -23,3 +23,26 @@ export const DEFAULT_STYLE = { badge: 'bg-slate-100 text-slate-500', dot: 'bg-sl
 export function typeStyle(type) {
   return TYPE_STYLES[type] ?? DEFAULT_STYLE
 }
+
+const TYPE_KEYWORDS = {
+  Carne:     ['carne', 'pollo', 'pechuga', 'muslo', 'ternera', 'cerdo', 'lomo', 'solomillo', 'filete', 'costilla', 'albóndiga', 'hamburguesa', 'jamón', 'chorizo', 'morcilla', 'pavo', 'cordero', 'conejo', 'rabo', 'estofado', 'asado'],
+  Pescado:   ['pescado', 'merluza', 'salmón', 'atún', 'bacalao', 'dorada', 'lubina', 'lenguado', 'rape', 'boquerones', 'sardinas', 'trucha', 'rodaballo', 'emperador', 'bonito', 'caballa'],
+  Marisco:   ['marisco', 'gamba', 'langostino', 'langosta', 'mejillón', 'almeja', 'calamar', 'pulpo', 'sepia', 'nécora', 'centollo', 'buey de mar', 'chirla', 'berberecho'],
+  Verduras:  ['verdura', 'menestra', 'espinacas', 'brócoli', 'coliflor', 'zanahoria', 'alcachofa', 'pisto', 'ratatouille', 'berenjena', 'calabacín', 'pimiento', 'champiñón', 'seta', 'espárrago', 'col', 'acelgas', 'judía verde', 'tomate relleno'],
+  Pasta:     ['pasta', 'espagueti', 'macarrones', 'fideos', 'lasaña', 'carbonara', 'boloñesa', 'tallarines', 'penne', 'rigatoni', 'fettuccine', 'canelones'],
+  Legumbres: ['legumbre', 'lenteja', 'garbanzo', 'judía', 'alubia', 'fabada', 'cocido', 'potaje', 'guiso'],
+  Arroz:     ['arroz', 'paella', 'risotto', 'fideuá'],
+  Ensalada:  ['ensalada'],
+  Sopa:      ['sopa', 'caldo', 'crema', 'gazpacho', 'puré', 'vichyssoise', 'consomé', 'minestrone'],
+  Huevos:    ['huevo', 'tortilla', 'revuelto', 'frittata', 'quiche'],
+  Pizza:     ['pizza', 'calzone'],
+}
+
+export function guessType(name) {
+  if (!name) return ''
+  const lower = name.toLowerCase()
+  for (const [type, keywords] of Object.entries(TYPE_KEYWORDS)) {
+    if (keywords.some((kw) => lower.includes(kw))) return type
+  }
+  return ''
+}

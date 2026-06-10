@@ -4,4 +4,4 @@
 
 * { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
 body { font-family: system-ui, sans-serif; background: #f3f4f6; }
-input, textarea, select { font-size: 16px; touch-action: manipulation; }
+input, textarea, select { font-size: 16px !important; touch-action: manipulation; }

@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useHousehold } from '../contexts/HouseholdContext'
 import { useDishes } from '../hooks/useDishes'
-import { useWeeklyMenu, DAYS, formatWeekRange } from '../hooks/useWeeklyMenu'
+import { useWeeklyMenu, DAYS, formatWeekRange, getWeekStart } from '../hooks/useWeeklyMenu'
 import { useShoppingList } from '../hooks/useShoppingList'
 import DayCard from '../components/DayCard'
 import DishSelector from '../components/DishSelector'
+
+const THIS_WEEK = getWeekStart()
 
 const DAY_LABELS = {
   monday: 'Lunes',
@@ -61,19 +63,30 @@ export default function WeeklyMenu() {
 
   return (
     <div className="p-4">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-1">
         <button
           onClick={prevWeek}
-          className="p-2 rounded-xl hover:bg-gray-100 active:bg-gray-200"
+          className="p-2 rounded-xl hover:bg-gray-100 active:bg-gray-200 cursor-pointer"
         >
           <ChevronLeft size={20} className="text-gray-600" />
         </button>
-        <span className="text-xs font-medium text-gray-600 text-center">
-          {formatWeekRange(weekStart)}
-        </span>
+        <div className="text-center">
+          <span className="text-xs font-medium text-gray-600 block">
+            {formatWeekRange(weekStart)}
+          </span>
+          <span className={`inline-block mt-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold ${
+            weekStart === THIS_WEEK
+              ? 'bg-emerald-100 text-emerald-700'
+              : weekStart < THIS_WEEK
+              ? 'bg-gray-100 text-gray-400'
+              : 'bg-blue-50 text-blue-500'
+          }`}>
+            {weekStart === THIS_WEEK ? 'Esta semana' : weekStart < THIS_WEEK ? 'Anterior' : 'Siguiente'}
+          </span>
+        </div>
         <button
           onClick={nextWeek}
-          className="p-2 rounded-xl hover:bg-gray-100 active:bg-gray-200"
+          className="p-2 rounded-xl hover:bg-gray-100 active:bg-gray-200 cursor-pointer"
         >
           <ChevronRight size={20} className="text-gray-600" />
         </button>

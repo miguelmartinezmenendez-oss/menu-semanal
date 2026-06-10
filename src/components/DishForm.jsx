@@ -1,15 +1,29 @@
 import { useState } from 'react'
 import { X, Plus } from 'lucide-react'
-import { DISH_TYPES } from '../lib/dishTypes'
+import { DISH_TYPES, guessType } from '../lib/dishTypes'
 
 export default function DishForm({ initial, onSave, onClose }) {
   const [name, setName] = useState(initial?.name ?? '')
-  const [type, setType] = useState(initial?.type ?? '')
+  const [type, setType] = useState(() => initial?.type ?? guessType(initial?.name ?? ''))
+  const [manualType, setManualType] = useState(!!initial?.type)
   const [ingredients, setIngredients] = useState(
     initial?.ingredients?.length ? initial.ingredients : ['']
   )
   const [notes, setNotes] = useState(initial?.notes ?? '')
   const [saving, setSaving] = useState(false)
+
+  function handleNameChange(value) {
+    setName(value)
+    if (!manualType) {
+      const guessed = guessType(value)
+      setType(guessed)
+    }
+  }
+
+  function handleTypeClick(t) {
+    setManualType(true)
+    setType(type === t ? '' : t)
+  }
 
   function updateIngredient(i, value) {
     setIngredients((prev) => prev.map((ing, idx) => (idx === i ? value : ing)))
@@ -56,7 +70,7 @@ export default function DishForm({ initial, onSave, onClose }) {
             </label>
             <input
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => handleNameChange(e.target.value)}
               placeholder="ej. Pollo al horno con patatas"
               className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-emerald-500"
               required
@@ -64,15 +78,20 @@ export default function DishForm({ initial, onSave, onClose }) {
           </div>
 
           <div>
-            <label className="text-sm font-medium text-gray-700 block mb-2">
-              Tipo <span className="text-gray-400 font-normal">(opcional)</span>
-            </label>
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-sm font-medium text-gray-700">Tipo</label>
+              {type && (
+                <span className="text-xs text-emerald-600 font-medium">
+                  {manualType ? 'Manual' : 'Auto-detectado'}
+                </span>
+              )}
+            </div>
             <div className="flex flex-wrap gap-2">
               {DISH_TYPES.map((t) => (
                 <button
                   key={t}
                   type="button"
-                  onClick={() => setType(type === t ? '' : t)}
+                  onClick={() => handleTypeClick(t)}
                   className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors cursor-pointer ${
                     type === t
                       ? 'bg-emerald-600 text-white'

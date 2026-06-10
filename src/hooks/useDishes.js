@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
+import { guessType } from '../lib/dishTypes'
 
 export function useDishes(householdId) {
   const [dishes, setDishes] = useState([])
@@ -29,16 +30,24 @@ export function useDishes(householdId) {
     return () => supabase.removeChannel(channel)
   }, [householdId, load])
 
-  async function addDish({ name, ingredients, notes }) {
-    await supabase.from('dishes').insert({ household_id: householdId, name, ingredients, notes })
+  async function addDish({ name, type, ingredients, notes }) {
+    await supabase.from('dishes').insert({ household_id: householdId, name, type, ingredients, notes })
   }
 
-  async function updateDish(id, { name, ingredients, notes }) {
-    await supabase.from('dishes').update({ name, ingredients, notes }).eq('id', id)
+  async function updateDish(id, { name, type, ingredients, notes }) {
+    await supabase.from('dishes').update({ name, type, ingredients, notes }).eq('id', id)
   }
 
   async function deleteDish(id) {
     await supabase.from('dishes').delete().eq('id', id)
+  }
+
+  async function categorizeAll() {
+    const untyped = dishes.filter((d) => !d.type)
+    for (const dish of untyped) {
+      const type = guessType(dish.name)
+      if (type) await supabase.from('dishes').update({ type }).eq('id', dish.id)
+    }
   }
 
   function randomDish(excludeIds = []) {
@@ -47,5 +56,5 @@ export function useDishes(householdId) {
     return available[Math.floor(Math.random() * available.length)]
   }
 
-  return { dishes, loading, addDish, updateDish, deleteDish, randomDish }
+  return { dishes, loading, addDish, updateDish, deleteDish, randomDish, categorizeAll }
 }
