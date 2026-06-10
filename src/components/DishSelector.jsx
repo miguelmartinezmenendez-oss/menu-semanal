@@ -36,6 +36,7 @@ function DishRow({ dish, onSelect }) {
 
 export default function DishSelector({ dishes, onSelect, onClose }) {
   const [query, setQuery] = useState('')
+  const [searchActive, setSearchActive] = useState(false)
   const filtered = dishes.filter((d) =>
     d.name.toLowerCase().includes(query.toLowerCase())
   )
@@ -55,6 +56,9 @@ export default function DishSelector({ dishes, onSelect, onClose }) {
           <div className="flex items-center gap-2 bg-stone-50 rounded-xl px-3 py-2">
             <Search size={15} className="text-stone-400" />
             <input
+              readOnly={!searchActive}
+              onTouchStart={() => setSearchActive(true)}
+              onClick={() => setSearchActive(true)}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Buscar..."
