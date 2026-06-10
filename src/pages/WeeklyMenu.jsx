@@ -62,38 +62,39 @@ export default function WeeklyMenu() {
   }
 
   return (
-    <div className="p-4">
-      <div className="flex items-center justify-between mb-1">
-        <button
-          onClick={prevWeek}
-          className="p-2 rounded-xl hover:bg-gray-100 active:bg-gray-200 cursor-pointer"
-        >
-          <ChevronLeft size={20} className="text-gray-600" />
-        </button>
-        <div className="text-center">
-          <span className="text-xs font-medium text-gray-600 block">
-            {formatWeekRange(weekStart)}
-          </span>
-          <span className={`inline-block mt-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold ${
-            weekStart === THIS_WEEK
-              ? 'bg-emerald-100 text-emerald-700'
-              : weekStart < THIS_WEEK
-              ? 'bg-gray-100 text-gray-400'
-              : 'bg-blue-50 text-blue-500'
-          }`}>
-            {weekStart === THIS_WEEK ? 'Esta semana' : weekStart < THIS_WEEK ? 'Anterior' : 'Siguiente'}
-          </span>
+    <div>
+      <div className="px-4 pt-5 pb-4 bg-gradient-to-b from-white to-transparent">
+        <div className="flex items-center justify-between">
+          <button
+            onClick={prevWeek}
+            className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-stone-100 active:bg-stone-200 cursor-pointer transition-colors"
+          >
+            <ChevronLeft size={20} className="text-stone-500" />
+          </button>
+          <div className="text-center">
+            <p className="text-sm font-semibold text-stone-700">{formatWeekRange(weekStart)}</p>
+            <span className={`inline-block mt-1 px-3 py-0.5 rounded-full text-[10px] font-bold ${
+              weekStart === THIS_WEEK
+                ? 'bg-emerald-100 text-emerald-700'
+                : weekStart < THIS_WEEK
+                ? 'bg-stone-100 text-stone-400'
+                : 'bg-sky-50 text-sky-500'
+            }`}>
+              {weekStart === THIS_WEEK ? 'Esta semana' : weekStart < THIS_WEEK ? 'Anterior' : 'Siguiente'}
+            </span>
+          </div>
+          <button
+            onClick={nextWeek}
+            className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-stone-100 active:bg-stone-200 cursor-pointer transition-colors"
+          >
+            <ChevronRight size={20} className="text-stone-500" />
+          </button>
         </div>
-        <button
-          onClick={nextWeek}
-          className="p-2 rounded-xl hover:bg-gray-100 active:bg-gray-200 cursor-pointer"
-        >
-          <ChevronRight size={20} className="text-gray-600" />
-        </button>
       </div>
 
+      <div className="px-4 pb-4">
       {menuChanged && (
-        <div className="mb-3 px-4 py-3 bg-amber-50 border border-amber-200 rounded-2xl text-xs text-amber-700">
+        <div className="mb-3 px-4 py-3 bg-amber-50 border border-amber-100 rounded-2xl text-xs text-amber-700 font-medium">
           El menú ha cambiado. Vuelve a generar la lista de la compra cuando termines.
         </div>
       )}
@@ -121,7 +122,7 @@ export default function WeeklyMenu() {
       {hasAnyDish() && (
         <button
           onClick={handleGenerate}
-          className="fixed bottom-20 left-1/2 -translate-x-1/2 bg-emerald-600 text-white px-7 py-3.5 rounded-full shadow-lg text-sm font-semibold whitespace-nowrap active:bg-emerald-700"
+          className="fixed bottom-20 left-1/2 -translate-x-1/2 bg-emerald-600 text-white px-7 py-3.5 rounded-full shadow-lg shadow-emerald-200 text-sm font-bold whitespace-nowrap active:bg-emerald-700 transition-all cursor-pointer"
         >
           Generar lista de la compra
         </button>
@@ -134,6 +135,7 @@ export default function WeeklyMenu() {
           onClose={() => setSelector(null)}
         />
       )}
+      </div>
     </div>
   )
 }

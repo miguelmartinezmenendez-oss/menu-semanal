@@ -3,5 +3,17 @@
 @tailwind utilities;
 
 * { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
-body { font-family: system-ui, sans-serif; background: #f3f4f6; }
-input, textarea, select { font-size: 16px !important; touch-action: manipulation; }
+
+body {
+  font-family: 'Quicksand', system-ui, sans-serif;
+  font-weight: 500;
+  background: #FAF8F5;
+  color: #1C1917;
+}
+
+input, textarea, select {
+  font-family: 'Quicksand', system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 16px !important;
+  touch-action: manipulation;
+}

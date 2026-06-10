@@ -45,23 +45,26 @@ export default function Settings() {
   }
 
   return (
-    <div className="p-4">
-      <h1 className="text-lg font-bold text-gray-900 mb-6">Ajustes</h1>
+    <div className="pb-8">
+      <div className="px-4 pt-5 pb-4 bg-gradient-to-b from-white to-transparent">
+        <h1 className="text-xl font-bold text-stone-800">Ajustes</h1>
+      </div>
 
-      <div className="bg-white rounded-2xl border border-gray-200 p-4 mb-4">
-        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">
+      <div className="px-4 space-y-3">
+      <div className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(120,113,108,0.08)] p-4">
+        <p className="text-[11px] font-bold text-stone-400 uppercase tracking-widest mb-1">
           Código del hogar
         </p>
-        <p className="text-sm text-gray-500 mb-3">
+        <p className="text-sm text-stone-500 mb-3">
           Comparte este código con tu pareja para que pueda unirse y ver el mismo menú.
         </p>
-        <div className="flex items-center gap-3 bg-gray-50 rounded-xl px-4 py-3">
-          <span className="flex-1 font-mono font-bold text-lg text-gray-800 tracking-widest">
-            {code || '...'}
+        <div className="flex items-center gap-3 bg-stone-50 rounded-xl px-4 py-3">
+          <span className="flex-1 font-mono font-bold text-lg text-stone-800 tracking-widest">
+            {code || '···'}
           </span>
           <button
             onClick={handleCopy}
-            className="p-2 text-gray-400 hover:text-emerald-600"
+            className="p-2 text-stone-400 hover:text-emerald-600 cursor-pointer transition-colors"
           >
             {copied ? <Check size={18} className="text-emerald-600" /> : <Copy size={18} />}
           </button>
@@ -72,7 +75,7 @@ export default function Settings() {
         <button
           onClick={handleCategorizeAll}
           disabled={categorizing}
-          className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-emerald-50 text-emerald-700 text-sm font-medium mb-3 active:bg-emerald-100 disabled:opacity-50 cursor-pointer"
+          className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-emerald-50 text-emerald-700 text-sm font-semibold active:bg-emerald-100 disabled:opacity-50 cursor-pointer transition-colors"
         >
           <Sparkles size={16} />
           {categorized
@@ -85,10 +88,11 @@ export default function Settings() {
 
       <button
         onClick={handleLeave}
-        className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl border border-red-200 text-red-400 text-sm font-medium active:bg-red-50 cursor-pointer"
+        className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl border border-red-100 text-red-400 text-sm font-semibold active:bg-red-50 cursor-pointer transition-colors"
       >
         <LogOut size={16} /> Salir del hogar
       </button>
+      </div>
     </div>
   )
 }
