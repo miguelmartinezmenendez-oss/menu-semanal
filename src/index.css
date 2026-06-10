@@ -2,6 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-* { -webkit-tap-highlight-color: transparent; }
-body { font-family: system-ui, sans-serif; background: #f9fafb; }
-input, textarea, select { font-size: 16px; }
+* { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+body { font-family: system-ui, sans-serif; background: #f3f4f6; }
+input, textarea, select { font-size: 16px; touch-action: manipulation; }

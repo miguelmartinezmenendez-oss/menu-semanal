@@ -62,8 +62,8 @@ export function useWeeklyMenu(householdId) {
     setWeekStart(d.toISOString().split('T')[0])
   }
 
-  async function setDishForDay(dayKey, dishId) {
-    const col = `${dayKey}_dish_id`
+  async function setDishForDay(dayKey, dishId, slot = 1) {
+    const col = slot === 2 ? `${dayKey}_dish2_id` : `${dayKey}_dish_id`
     if (menu) {
       await supabase.from('weekly_menu').update({ [col]: dishId }).eq('id', menu.id)
     } else {
@@ -75,17 +75,15 @@ export function useWeeklyMenu(householdId) {
     }
   }
 
-  async function clearDishForDay(dayKey) {
+  async function clearDishForDay(dayKey, slot = 1) {
     if (!menu) return
-    await supabase
-      .from('weekly_menu')
-      .update({ [`${dayKey}_dish_id`]: null })
-      .eq('id', menu.id)
+    const col = slot === 2 ? `${dayKey}_dish2_id` : `${dayKey}_dish_id`
+    await supabase.from('weekly_menu').update({ [col]: null }).eq('id', menu.id)
   }
 
   function hasAnyDish() {
     if (!menu) return false
-    return DAYS.some((d) => menu[`${d}_dish_id`])
+    return DAYS.some((d) => menu[`${d}_dish_id`] || menu[`${d}_dish2_id`])
   }
 
   return { menu, weekStart, loading, prevWeek, nextWeek, setDishForDay, clearDishForDay, hasAnyDish }

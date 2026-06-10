@@ -45,9 +45,11 @@ export function useShoppingList(householdId, weekStart) {
     const dishMap = Object.fromEntries(dishes.map((d) => [d.id, d]))
     const allIngredients = []
     for (const day of DAYS) {
-      const dishId = menu[`${day}_dish_id`]
-      if (dishId && dishMap[dishId]) {
-        allIngredients.push(...(dishMap[dishId].ingredients || []))
+      for (const col of [`${day}_dish_id`, `${day}_dish2_id`]) {
+        const dishId = menu[col]
+        if (dishId && dishMap[dishId]) {
+          allIngredients.push(...(dishMap[dishId].ingredients || []))
+        }
       }
     }
 

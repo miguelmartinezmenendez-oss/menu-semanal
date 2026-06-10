@@ -25,15 +25,15 @@ export default function WeeklyMenu() {
   const { menu, weekStart, prevWeek, nextWeek, setDishForDay, clearDishForDay, hasAnyDish } =
     useWeeklyMenu(householdId)
   const { generateFromMenu } = useShoppingList(householdId, weekStart)
-  const [selectorDay, setSelectorDay] = useState(null)
+  const [selector, setSelector] = useState(null) // { day, slot }
   const [menuChanged, setMenuChanged] = useState(false)
 
   const dishMap = Object.fromEntries(dishes.map((d) => [d.id, d]))
 
   async function handleSelectDish(dishId) {
-    await setDishForDay(selectorDay, dishId)
+    await setDishForDay(selector.day, dishId, selector.slot)
     setMenuChanged(true)
-    setSelectorDay(null)
+    setSelector(null)
   }
 
   async function handleRandom(dayKey) {
@@ -41,10 +41,15 @@ export default function WeeklyMenu() {
       alert('Primero añade platos en Mis platos')
       return
     }
-    const usedIds = DAYS.map((d) => menu?.[`${d}_dish_id`]).filter(Boolean)
+    const slot = menu?.[`${dayKey}_dish_id`] ? 2 : 1
+    if (slot === 2 && menu?.[`${dayKey}_dish2_id`]) return
+    const usedIds = DAYS.flatMap((d) => [
+      menu?.[`${d}_dish_id`],
+      menu?.[`${d}_dish2_id`],
+    ]).filter(Boolean)
     const dish = randomDish(usedIds)
     if (!dish) return
-    await setDishForDay(dayKey, dish.id)
+    await setDishForDay(dayKey, dish.id, slot)
     setMenuChanged(true)
   }
 
@@ -82,19 +87,19 @@ export default function WeeklyMenu() {
 
       <div className="space-y-2">
         {DAYS.map((day) => {
-          const dishId = menu?.[`${day}_dish_id`]
-          const dish = dishId ? dishMap[dishId] : null
+          const dish1 = dishMap[menu?.[`${day}_dish_id`]] ?? null
+          const dish2 = dishMap[menu?.[`${day}_dish2_id`]] ?? null
           return (
             <DayCard
               key={day}
               label={DAY_LABELS[day]}
-              dish={dish}
-              onAdd={() => setSelectorDay(day)}
+              dish1={dish1}
+              dish2={dish2}
+              onAdd1={() => setSelector({ day, slot: 1 })}
+              onAdd2={() => setSelector({ day, slot: 2 })}
               onRandom={() => handleRandom(day)}
-              onClear={() => {
-                clearDishForDay(day)
-                setMenuChanged(true)
-              }}
+              onClear1={() => { clearDishForDay(day, 1); setMenuChanged(true) }}
+              onClear2={() => { clearDishForDay(day, 2); setMenuChanged(true) }}
             />
           )
         })}
@@ -109,11 +114,11 @@ export default function WeeklyMenu() {
         </button>
       )}
 
-      {selectorDay && (
+      {selector && (
         <DishSelector
           dishes={dishes}
           onSelect={handleSelectDish}
-          onClose={() => setSelectorDay(null)}
+          onClose={() => setSelector(null)}
         />
       )}
     </div>

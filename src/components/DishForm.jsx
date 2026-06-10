@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { X, Plus } from 'lucide-react'
+import { DISH_TYPES } from '../lib/dishTypes'
 
 export default function DishForm({ initial, onSave, onClose }) {
   const [name, setName] = useState(initial?.name ?? '')
+  const [type, setType] = useState(initial?.type ?? '')
   const [ingredients, setIngredients] = useState(
     initial?.ingredients?.length ? initial.ingredients : ['']
   )
@@ -26,7 +28,12 @@ export default function DishForm({ initial, onSave, onClose }) {
     if (!name.trim() || saving) return
     setSaving(true)
     const cleanIngredients = ingredients.map((i) => i.trim()).filter(Boolean)
-    await onSave({ name: name.trim(), ingredients: cleanIngredients, notes: notes.trim() || null })
+    await onSave({
+      name: name.trim(),
+      type: type || null,
+      ingredients: cleanIngredients,
+      notes: notes.trim() || null,
+    })
     setSaving(false)
   }
 
@@ -51,9 +58,31 @@ export default function DishForm({ initial, onSave, onClose }) {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="ej. Pollo al horno con patatas"
-              className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-emerald-500"
+              className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-emerald-500"
               required
             />
+          </div>
+
+          <div>
+            <label className="text-sm font-medium text-gray-700 block mb-2">
+              Tipo <span className="text-gray-400 font-normal">(opcional)</span>
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {DISH_TYPES.map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => setType(type === t ? '' : t)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors cursor-pointer ${
+                    type === t
+                      ? 'bg-emerald-600 text-white'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
           </div>
 
           <div>
@@ -65,7 +94,7 @@ export default function DishForm({ initial, onSave, onClose }) {
                     value={ing}
                     onChange={(e) => updateIngredient(i, e.target.value)}
                     placeholder={`Ingrediente ${i + 1}`}
-                    className="flex-1 border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-emerald-500"
+                    className="flex-1 border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-emerald-500"
                   />
                   {ingredients.length > 1 && (
                     <button
@@ -97,7 +126,7 @@ export default function DishForm({ initial, onSave, onClose }) {
               onChange={(e) => setNotes(e.target.value)}
               placeholder="ej. Sin gluten, favorita de verano..."
               rows={2}
-              className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-emerald-500 resize-none"
+              className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-emerald-500 resize-none"
             />
           </div>
 
